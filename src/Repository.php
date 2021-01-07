@@ -3,12 +3,15 @@
 namespace Anxis\LaravelRepositoryPattern;
 
 use Anxis\LaravelRepositoryPattern\Interfaces\IRepository;
+use Anxis\LaravelRepositoryPattern\Traits\Filterable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class Repository implements IRepository
 {
+    use Filterable;
+
     /**
      * @var Model
      */
@@ -68,6 +71,9 @@ class Repository implements IRepository
      */
     public function paginate()
     {
+        if (!empty($this->filters)) {
+            return $this->filterable($this->newQuery()->getModel())->jsonPaginate();
+        }
         return $this->newQuery()->jsonPaginate();
     }
 
