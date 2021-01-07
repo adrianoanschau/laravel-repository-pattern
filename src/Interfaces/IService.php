@@ -3,7 +3,6 @@
 namespace Anxis\LaravelRepositoryPattern\Interfaces;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 interface IService
 {

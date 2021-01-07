@@ -24,13 +24,31 @@ class Repository implements IRepository
     }
 
     /**
-     * @param int $id
+     * @param $id
      * @param array|string[] $columns
      * @param array $relations
      * @return Model
      */
-    public function findById(int $id, array $columns = ['*'], array $relations = []): Model
+    private function findByCompositeID($id, array $columns = ['*'], array $relations = []): Model
     {
+        $ids = explode('-', $id);
+        $criteria = collect(array_flip($this->newQuery()->getModel()->primaryKey))->map(function ($value, $key) use ($ids) {
+            return $ids[$value];
+        })->toArray();
+        return $this->findByCriteria($criteria, $columns, $relations);
+    }
+
+    /**
+     * @param int|string $id
+     * @param array|string[] $columns
+     * @param array $relations
+     * @return Model
+     */
+    public function findById($id, array $columns = ['*'], array $relations = []): Model
+    {
+        if (is_string($id) && str_contains($id, '-')) {
+            return $this->findByCompositeID($id, $columns, $relations);
+        }
         return $this->findByCriteria(['id' => $id], $columns, $relations);
     }
 
@@ -43,6 +61,14 @@ class Repository implements IRepository
     public function findByCriteria(array $criteria, array $columns = ['*'], array $relations = []): Model
     {
         return $this->newQuery()->select($columns)->with($relations)->where($criteria)->firstOrFail();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function paginate()
+    {
+        return $this->newQuery()->jsonPaginate();
     }
 
     /**
