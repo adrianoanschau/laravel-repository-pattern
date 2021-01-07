@@ -2,24 +2,24 @@
 
 namespace Anxis\LaravelRepositoryPattern\Traits;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait Filterable
 {
     protected $filters = [];
+    protected $mappable = [];
 
-    public function filterable($model)
+    public function filterable(Model $model)
     {
         $filters = request()->get('filter') ?? [];
         $filters = collect(Arr::only($filters, array_keys($this->filters)));
         $filters->each(function ($value, $filter) use (&$model) {
             $type = $this->filters[$filter];
-            if (get_class($model) === Builder::class) {
-                $attr = $model->getModel()->getAttributeName($filter);
-            } else {
-                $attr = $model->getAttributeName($filter);
+            $attr = $filter;
+            if (isset($this->mappable[$attr])) {
+                $attr = $this->mappable[$attr];
             }
             if ($type === 'custom') {
                 $method = "get" . Str::studly($filter) . "Filter";
