@@ -15,7 +15,8 @@
         "php": ">=7.2",
         "illuminate/support": "^6|^7|^8|^9",
         "illuminate/pagination": "^6|^7|^8|^9",
-        "illuminate/database": "^6|^7|^8|^9"
+        "illuminate/database": "^6|^7|^8|^9",
+        "laravel/framework": "^6|^7|^8"
     },
     "autoload": {
         "psr-4": {

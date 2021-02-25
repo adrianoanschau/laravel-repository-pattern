@@ -37,8 +37,10 @@ trait Filterable
     private function where($type, $model, $attr, $value)
     {
         switch($type) {
+            case 'number':
+                return $model->where($attr, "like", "%$value%");
             case 'string':
-                return $model->whereRaw("LOWER($attr) LIKE (?)", ["'%$value%'"]);
+                return $model->whereRaw("LOWER($attr) LIKE ('%$value%')");
             default:
                 return $model->where($attr, $value);
         }
